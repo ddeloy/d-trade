@@ -1,4 +1,4 @@
-const API_KEY = 'ITYDRGE14LK6JC5O'; // Your Alpha Vantage API key
+const API_KEY = import.meta.env.VITE_API_KEY;
 
 /**
  * Fetch real-time stock data from Alpha Vantage. EST
