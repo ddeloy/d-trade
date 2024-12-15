@@ -1,0 +1,419 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f9;
+}
+
+#main-content {
+  padding: 2em;
+}
+
+header {
+  background-color: #333;
+  color: #fff;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+header nav a {
+  color: #fff;
+  margin: 0 1rem;
+  text-decoration: none;
+}
+
+header nav a:hover {
+  text-decoration: underline;
+}
+
+.dashboard {
+  padding: 2rem;
+}
+
+input {
+  padding: 0.5rem;
+  margin-right: 0.5rem;
+}
+
+button {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+#stock-data {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 4px;
+  max-width:300px;
+  color: #0056b3;
+}
+
+#volumeProfileChart {
+  border: 1px solid #ddd;
+  background-color: #f9f9f9;
+}
+
+/*#chart-container {
+  text-align: center;
+  margin-top: 1rem;
+  width: 100%; !* Ensure the container spans the parent width *!
+  overflow: hidden; !* Prevent scrollbars from appearing *!
+}*/
+#market-profile-table-container {
+  max-width: 500px;
+  text-align: center;
+}
+
+#chart-container, #market-profile-container {
+  margin: 20px auto;
+  text-align: center;
+  width: 100%;
+  overflow: hidden;
+}
+
+.market-profile-table {
+  max-width: 600px;
+  border-collapse: collapse;
+  margin: 0 auto;
+}
+
+.market-profile-table th,
+.market-profile-table td {
+  border: 1px solid #ddd;
+  padding: 0.5rem;
+  text-align: left;
+}
+
+.market-profile-table th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
+
+
+/*#market-profile-container {
+  text-align: center;
+  margin-top: 1rem;
+  width: 100%; !* Ensure the container spans the parent width *!
+  overflow: hidden; !* Prevent scrollbars from appearing *!
+
+}*/
+
+
+canvas {
+  display: block; /* Prevent inline-block spacing issues */
+  margin: 0 auto; /* Center the canvas */
+  max-height: 500px;
+}
+
+
+/* Trade Form */
+form {
+  margin-bottom: 1rem;
+}
+
+form div {
+  margin-bottom: 0.5rem;
+}
+
+form label {
+  margin-right: 0.5rem;
+}
+
+form input, form select {
+  padding: 0.5rem;
+  margin-right: 0.5rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+table th, table td {
+  border: 1px solid #ccc;
+  padding: 0.5rem;
+  text-align: left;
+}
+
+table th {
+  background-color: #f4f4f4;
+}
+
+table td button {
+  padding: 0.3rem 0.6rem;
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+table td button:hover {
+  background-color: #c0392b;
+}
+/* Style the recent search list */
+#recent-searches ul {
+  list-style: none;
+  padding: 0;
+}
+
+#recent-searches ul li {
+  cursor: pointer;
+  color: #007bff; /* Blue color for clickable appearance */
+  text-decoration: underline; /* Underline to indicate it's a link */
+  margin-bottom: 0.5rem; /* Add spacing between items */
+  font-size: 1rem; /* Adjust font size for better visibility */
+}
+
+#recent-searches ul li:hover {
+  color: #0056b3; /* Darker blue on hover */
+  text-decoration: none; /* Remove underline on hover */
+  font-weight: bold; /* Emphasize on hover */
+}
+
+.plan-container {
+  padding: 2rem;
+}
+
+/* Notification container */
+#notification-container {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  z-index: 1000;
+  width: 300px; /* Optional: Set a fixed width for notifications */
+  display: flex;
+  flex-direction: column; /* Stack notifications vertically */
+  gap: 10px; /* Space between notifications */
+}
+
+/* Notification styling */
+.notification {
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 1rem;
+  color: white;
+  font-weight: bold;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for a raised effect */
+  animation: fade-in 0.3s ease-out; /* Animation for entry */
+  opacity: 1; /* Ensure full visibility initially */
+}
+
+/* Success notification */
+.notification.success {
+  background-color: #4caf50; /* Green for success */
+}
+
+/* Error notification */
+.notification.error {
+  background-color: #f44336; /* Red for error */
+}
+
+.info-icon {
+  cursor: pointer;
+  color: blue;
+  margin-left: 8px;
+  font-size: 0.9em;
+  position: relative;
+}
+
+.info-icon:hover::after {
+  content: attr(data-info);
+  position: absolute;
+  top: 20px;
+  left: 0;
+  width: 250px;
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  font-size: 0.85em;
+  color: #333;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  white-space: normal;
+}
+
+.info-icon:hover::before {
+  content: '';
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent #ccc transparent;
+}
+
+
+/* Notification fade-in animation */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Optional: Smoothly fade out notifications (if you add a fade-out delay in JS) */
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Strategy Page Styling */
+.strategy-page {
+  display: flex;.strategy-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.strategy-link {
+    text-decoration: none;
+    color: #333;
+    flex-grow: 1;
+}
+
+.delete-strategy {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.delete-strategy:hover {
+    background-color: darkred;
+}
+
+  height: 100%;
+}
+
+.strategy-sidebar {
+  width: 20%;
+  background-color: #f4f4f4;
+  border-right: 1px solid #ddd;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.strategy-sidebar nav ul {
+  list-style: none;
+  padding: 0;
+}
+
+.strategy-sidebar nav ul li {
+  margin-bottom: 1rem;
+}
+
+.strategy-sidebar nav ul li a {
+  text-decoration: none;
+  color: #007bff;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.strategy-sidebar nav ul li a:hover {
+  text-decoration: underline;
+}
+
+.strategy-content {
+  width: 80%;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+.strategy-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.strategy-link {
+  text-decoration: none;
+  color: #333;
+  flex-grow: 1;
+}
+
+.delete-strategy {
+  background-color: red;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.delete-strategy:hover {
+  background-color: darkred;
+}
+
+#notification-container {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  z-index: 1000;
+}
+
+.notification {
+  background-color: #f0f0f0;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 10px 15px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #333;
+  animation: fade-in 0.3s ease;
+}
+
+.notification.success {
+  border-left: 5px solid #4caf50;
+}
+
+.notification.error {
+  border-left: 5px solid #f44336;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+
+
+
+
+
+
+
