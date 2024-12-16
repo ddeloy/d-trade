@@ -11,6 +11,10 @@ export function PivotDashboard(): HTMLElement {
         <input id="symbol-input" type="text" placeholder="Enter stock symbol" />
         <button id="fetch-button">Fetch Data</button>
     </div>
+    <div><h3>[WIP] Pivot Day Trading</h3>
+    <p>Based on the the work of Mark Fisher and his proprietary "ACD Trading Method" - combined with Peter Steidlmayer's Market Profile theory.<br/>
+    The primary tenant - identifying significant points of day trade entry and exit by analyzing price action, volume, and volatility.</p>
+    </div>
     <div id="stock-data" style="margin-top: 1rem;"></div>
     <div id="rolling-pivot-data" style="margin-top: 1rem; text-align: left;"></div>
     <div id="daily-table-container" style="margin-top: 2rem;">
