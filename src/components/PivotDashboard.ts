@@ -1,5 +1,5 @@
-import { fetchLast5DaysData } from '../utils/api';
-import { Chart } from 'chart.js/auto';
+import {fetchLast5DaysData} from '../utils/api';
+import {Chart} from 'chart.js/auto';
 
 export function PivotDashboard(): HTMLElement {
     const dashboard = document.createElement('div');
@@ -23,7 +23,7 @@ The primary tenant - identifying significant points of day trade entry and exit 
         <h3 style="text-align:left">Data for Rolling Last 5 Trading Days</h3>
     </div>
     <div style="margin-top: 2rem; text-align: left;">
-        <canvas id="pivot-chart" width="800" height="400" style="display: block; margin: 0px; box-sizing: border-box; max-width: 60%; height: 500px;"></canvas>
+        <canvas id="pivot-chart" width="800" height="400" style="display: block; margin: 0 auto; box-sizing: border-box; max-width: 60%; height: 500px;"></canvas>
     </div>
     `;
 
@@ -50,7 +50,7 @@ The primary tenant - identifying significant points of day trade entry and exit 
         try {
             stockDataDiv.textContent = 'Loading...';
 
-            const { last5Days, rolling2DayPivot } = await fetchLast5DaysData(symbol, numDays);
+            const {last5Days, rolling2DayPivot} = await fetchLast5DaysData(symbol, numDays);
 
             // Display rolling 2-day pivot data
             rollingPivotDiv.innerHTML = `
@@ -66,35 +66,38 @@ The primary tenant - identifying significant points of day trade entry and exit 
             table.style.width = 'fit-content';
             table.style.borderCollapse = 'collapse';
 
+            // Create table header
             const headerRow = document.createElement('tr');
             headerRow.innerHTML = `
-                <th style="text-align: left; padding: 8px; border: 1px solid #ddd;">Date</th>
-                <th style="text-align: left; padding: 8px; border: 1px solid #ddd;">Open</th>
-                <th style="text-align: left; padding: 8px; border: 1px solid #ddd;">High</th>
-                <th style="text-align: left; padding: 8px; border: 1px solid #ddd;">Low</th>
-                <th style="text-align: left; padding: 8px; border: 1px solid #ddd;">Close</th>
-                <th style="text-align: left; padding: 8px; border: 1px solid #ddd;">Pivot Range</th>
+                <th>Date</th>
+                <th>Open</th>
+                <th>High</th>
+                <th>Low</th>
+                <th>Close</th>
+                <th>Pivot Range</th>
             `;
             table.appendChild(headerRow);
 
             const dates: string[] = [];
             const avgRanges: number[] = [];
 
+            // Create table rows
             Object.entries(last5Days).forEach(([date, values]) => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td style="padding: 8px; border: 1px solid #ddd;">${date}</td>
-                    <td style="padding: 8px; border: 1px solid #ddd;">${values.open}</td>
-                    <td style="padding: 8px; border: 1px solid #ddd;">${values.high}</td>
-                    <td style="padding: 8px; border: 1px solid #ddd;">${values.low}</td>
-                    <td style="padding: 8px; border: 1px solid #ddd;">${values.close}</td>
-                    <td style="padding: 8px; border: 1px solid #ddd;">${values.pivotHigh} to ${values.pivotLow}</td>
+                    <td>${date}</td>
+                    <td>${values.open}</td>
+                    <td>${values.high}</td>
+                    <td>${values.low}</td>
+                    <td>${values.close}</td>
+                    <td>${values.pivotHigh} to ${values.pivotLow}</td>
                 `;
                 table.appendChild(row);
 
                 dates.push(date);
                 avgRanges.push(parseFloat(values.pivotNum));
             });
+
 
             dailyTableContainer.appendChild(table);
             stockDataDiv.textContent = `Data for ${symbol} updated successfully.`;
