@@ -19,8 +19,8 @@ export type RollingPivotData = {
     rollingPivotRange: string;
 };
 
-// Function to fetch last 5 days of data
-export async function fetchLast5DaysData(symbol: string): Promise<{
+// Function to fetch last N days of data
+export async function fetchLast5DaysData(symbol: string, numDays: number = 5): Promise<{
     last5Days: Record<string, DailyData>;
     rolling2DayPivot: RollingPivotData;
 }> {
@@ -55,8 +55,8 @@ export async function fetchLast5DaysData(symbol: string): Promise<{
         .sort((a, b) => new Date(b).getTime() - new Date(a).getTime()); // Descending order
 
     const last5DaysData: Record<string, DailyData> = {};
-    // slice determines num of days to fetch and plot
-    validDates.slice(0, 5).forEach((date) => {
+    // Slice is now dynamic, determined by `numDays`
+    validDates.slice(0, numDays).forEach((date) => {
         const dayData = allData[date];
         const open = parseFloat(dayData['1. open']);
         const high = parseFloat(dayData['2. high']);
