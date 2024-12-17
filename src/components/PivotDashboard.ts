@@ -23,7 +23,7 @@ The primary tenant - identifying significant points of day trade entry and exit 
         <h3 style="text-align:left">Data for Rolling Last 5 Trading Days</h3>
     </div>
     <div style="margin-top: 2rem; text-align: left;">
-        <canvas id="pivot-chart" width="800" height="400" style="display: block; margin: 0 auto; box-sizing: border-box; max-width: 60%; height: 500px;"></canvas>
+        <canvas id="pivot-chart" width="800" height="400" style="display: block; margin: 0 auto; box-sizing: border-box; max-width: 100%; max-height: 100%; height: 500px;"></canvas>
     </div>
     `;
 
