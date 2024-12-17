@@ -75,6 +75,7 @@ The primary tenant - identifying significant points of day trade entry and exit 
                 <th>Low</th>
                 <th>Close</th>
                 <th>Pivot Range</th>
+                <th>Plus/Minus</th>
             `;
             table.appendChild(headerRow);
 
@@ -83,6 +84,18 @@ The primary tenant - identifying significant points of day trade entry and exit 
 
             // Create table rows
             Object.entries(last5Days).forEach(([date, values]) => {
+                const open = parseFloat(values.open);
+                const close = parseFloat(values.close);
+                const pivotLow = parseFloat(values.pivotLow);
+                const pivotHigh = parseFloat(values.pivotHigh);
+
+                let plusMinus = 0;
+
+                if (open < pivotLow && close > pivotHigh) {
+                    plusMinus = 1;
+                } else if (open > pivotHigh && close < pivotLow) {
+                    plusMinus = -1;
+                }
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${date}</td>
@@ -91,6 +104,7 @@ The primary tenant - identifying significant points of day trade entry and exit 
                     <td>${values.low}</td>
                     <td>${values.close}</td>
                     <td>${values.pivotHigh} to ${values.pivotLow}</td>
+                    <td>${plusMinus}</td>
                 `;
                 table.appendChild(row);
 
