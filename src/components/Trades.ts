@@ -2,24 +2,32 @@ import { TradeForm } from './TradeForm';
 
 type Trade = {
     symbol: string;
-    action: string; // 'buy' or 'sell'
+    action: string;
     quantity: number;
-    price: number; // Planned price
-    executedPrice?: number; // Actual price when executed
-    status?: 'pending' | 'executed'; // Status of the trade
-    profitLoss?: number; // P/L for executed trades
+    price: number;
+    strategy?: string;
+    notes?: string;
+    executedPrice?: number;
+    status?: 'pending' | 'executed';
+    profitLoss?: number;
 };
 
-// Tracks unmatched buy trades for each symbol
-const openTrades: { [symbol: string]: { quantity: number; executedPrice: number }[] } = {};
+type OpenTrade = {
+    quantity: number;
+    executedPrice: number;
+};
+
+// Tracks open buy trades
+const openTrades: { [symbol: string]: OpenTrade[] } = {};
+
+const strategies = ['A Up', 'A Down', 'Rubber Band', 'Fade', 'System Failure', 'Scalp','Overnight'];
 
 export function Trades(): HTMLElement {
-    const plannedTrades: Trade[] = loadTradesFromLocalStorage(); // Load saved trades
+    const plannedTrades: Trade[] = loadTradesFromLocalStorage();
     const tradesPage = document.createElement('div');
 
-    // HTML structure for the trades page
     tradesPage.innerHTML = `
-        <div id="notification-container"></div> <!-- Notification container -->
+        <div id="notification-container"></div>
         <h2>Trades</h2>
         <div id="trade-form-container"></div>
         <h3>Planned Trades</h3>
@@ -27,6 +35,8 @@ export function Trades(): HTMLElement {
             <thead>
                 <tr>
                     <th>Symbol</th>
+                    <th>Strategy</th>
+                    <th>Notes</th>
                     <th>Action</th>
                     <th>Quantity</th>
                     <th>Price</th>
@@ -35,9 +45,7 @@ export function Trades(): HTMLElement {
                     <th>Actions</th>
                 </tr>
             </thead>
-            <tbody>
-                <tr><td colspan="7">No trades planned yet.</td></tr>
-            </tbody>
+            <tbody></tbody>
         </table>
         <h3>Summary</h3>
         <div id="trade-summary">
@@ -47,24 +55,21 @@ export function Trades(): HTMLElement {
         </div>
     `;
 
-    const tradeFormContainer = tradesPage.querySelector<HTMLDivElement>('#trade-form-container')!;
     const plannedTradesTable = tradesPage.querySelector<HTMLTableSectionElement>('#planned-trades tbody')!;
     const summaryDiv = tradesPage.querySelector<HTMLDivElement>('#trade-summary')!;
+    const notificationContainer = tradesPage.querySelector<HTMLDivElement>('#notification-container')!;
 
     function showNotification(message: string, type: 'success' | 'error'): void {
-        const container = tradesPage.querySelector<HTMLDivElement>('#notification-container')!;
         const notification = document.createElement('div');
         notification.className = `notification ${type}`;
         notification.textContent = message;
 
-        container.appendChild(notification);
-        setTimeout(() => {
-            notification.remove();
-        }, 3000);
+        notificationContainer.appendChild(notification);
+        setTimeout(() => notification.remove(), 3000);
     }
 
-    function saveTradesToLocalStorage(trades: Trade[]): void {
-        localStorage.setItem('plannedTrades', JSON.stringify(trades));
+    function saveTradesToLocalStorage(): void {
+        localStorage.setItem('plannedTrades', JSON.stringify(plannedTrades));
     }
 
     function loadTradesFromLocalStorage(): Trade[] {
@@ -72,131 +77,145 @@ export function Trades(): HTMLElement {
         return storedTrades ? JSON.parse(storedTrades) : [];
     }
 
-    async function executeTrade(trade: Trade): Promise<string> {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                resolve(`Trade executed: ${trade.action} ${trade.quantity} of ${trade.symbol} at $${trade.price}`);
-            }, 1000);
-        });
-    }
-
-    function calculateTradeProfitLoss(symbol: string, sellQuantity: number, sellPrice: number): { profit: number; remainingSellQuantity: number } {
+    function calculateTradeProfitLoss(symbol: string, sellQuantity: number, sellPrice: number): number {
         let profit = 0;
-        let remainingSellQuantity = sellQuantity;
 
         if (openTrades[symbol]) {
             const buys = openTrades[symbol];
+            let remainingSellQuantity = sellQuantity;
+
             while (remainingSellQuantity > 0 && buys.length > 0) {
                 const buy = buys[0];
                 const matchedQuantity = Math.min(remainingSellQuantity, buy.quantity);
 
                 profit += matchedQuantity * (sellPrice - buy.executedPrice);
-
                 buy.quantity -= matchedQuantity;
                 remainingSellQuantity -= matchedQuantity;
 
-                if (buy.quantity === 0) {
-                    buys.shift();
-                }
+                if (buy.quantity === 0) buys.shift();
             }
         }
 
-        return { profit, remainingSellQuantity };
-    }
-
-    function calculateSummary(trades: Trade[]): { totalBuy: number; totalSell: number; totalProfitLoss: number } {
-        return trades.reduce(
-            (summary, trade) => {
-                const tradeValue = trade.quantity * (trade.executedPrice || trade.price);
-                if (trade.action === 'buy') summary.totalBuy += tradeValue;
-                else if (trade.action === 'sell') summary.totalSell += tradeValue;
-
-                if (trade.status === 'executed' && trade.action === 'sell') {
-                    summary.totalProfitLoss += trade.profitLoss || 0;
-                }
-
-                return summary;
-            },
-            { totalBuy: 0, totalSell: 0, totalProfitLoss: 0 }
-        );
-    }
-
-    function updateSummary(): void {
-        const summary = calculateSummary(plannedTrades);
-        summaryDiv.innerHTML = `
-            <p><strong>Total Buy:</strong> $${summary.totalBuy.toFixed(2)}</p>
-            <p><strong>Total Sell:</strong> $${summary.totalSell.toFixed(2)}</p>
-            <p><strong>Overall Profit/Loss:</strong> $${summary.totalProfitLoss.toFixed(2)}</p>
-        `;
+        return profit;
     }
 
     function updatePlannedTradesTable(): void {
         plannedTradesTable.innerHTML = plannedTrades.length
-            ? plannedTrades
-                .map(
-                    (trade, index) => `
+            ? plannedTrades.map((trade, index) => `
                 <tr>
                     <td>${trade.symbol}</td>
+                    <td>
+                        <select class="strategy-select" data-index="${index}">
+                            <option value="">Select Strategy</option>
+                            ${strategies.map(
+                (s) => `<option value="${s}" ${trade.strategy === s ? 'selected' : ''}>${s}</option>`
+            ).join('')}
+                        </select>
+                    </td>
+                    <td contenteditable="true" class="notes-cell" data-index="${index}">
+                        ${trade.notes || '<span class="placeholder">Click to add notes</span>'}
+                    </td>
                     <td>${trade.action}</td>
                     <td>${trade.quantity}</td>
                     <td>$${trade.price.toFixed(2)}</td>
                     <td>$${(trade.quantity * trade.price).toFixed(2)}</td>
-                    <td>${trade.status === 'executed' && trade.action === 'sell' ? `$${(trade.profitLoss || 0).toFixed(2)}` : '-'}</td>
+                    <td>${trade.profitLoss !== undefined ? `$${trade.profitLoss.toFixed(2)}` : '-'}</td>
                     <td>
+                        <button class="execute-trade" data-index="${index}">Execute</button>
                         <button class="delete-trade" data-index="${index}">Delete</button>
-                        <button class="execute-trade" data-index="${index}" ${trade.status === 'executed' ? 'disabled' : ''}>Execute</button>
                     </td>
                 </tr>
-            `
-                )
-                .join('')
-            : '<tr><td colspan="7">No trades planned yet.</td></tr>';
+            `).join('')
+            : '<tr><td colspan="9">No trades planned yet.</td></tr>';
 
-        saveTradesToLocalStorage(plannedTrades);
+        saveTradesToLocalStorage();
         updateSummary();
 
-        tradesPage.querySelectorAll<HTMLButtonElement>('.delete-trade').forEach((button) => {
-            button.addEventListener('click', () => {
-                const index = parseInt(button.dataset.index!, 10);
+        tradesPage.querySelectorAll<HTMLSelectElement>('.strategy-select').forEach((select) => {
+            select.addEventListener('change', () => {
+                const index = parseInt(select.dataset.index!);
+                plannedTrades[index].strategy = select.value;
+                saveTradesToLocalStorage();
+            });
+        });
+
+        tradesPage.querySelectorAll<HTMLTableCellElement>('.notes-cell').forEach((cell) => {
+            const index = parseInt(cell.dataset.index!);
+            const trade = plannedTrades[index];
+
+            cell.addEventListener('focus', () => {
+                if (!trade.notes) {
+                    cell.classList.remove('placeholder');
+                    cell.textContent = '';
+                }
+            });
+
+            cell.addEventListener('blur', () => {
+                const text = cell.textContent?.trim();
+                if (text) {
+                    trade.notes = text;
+                    cell.classList.remove('placeholder');
+                } else {
+                    trade.notes = '';
+                    cell.innerHTML = '<span class="placeholder">Click to add notes</span>';
+                }
+                saveTradesToLocalStorage();
+            });
+        });
+
+        tradesPage.querySelectorAll<HTMLButtonElement>('.execute-trade').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                const index = parseInt(btn.dataset.index!);
+                const trade = plannedTrades[index];
+                trade.status = 'executed';
+
+                if (trade.action === 'buy') {
+                    if (!openTrades[trade.symbol]) openTrades[trade.symbol] = [];
+                    openTrades[trade.symbol].push({ quantity: trade.quantity, executedPrice: trade.price });
+                } else if (trade.action === 'sell') {
+                    trade.profitLoss = calculateTradeProfitLoss(trade.symbol, trade.quantity, trade.price);
+                }
+
+                updatePlannedTradesTable();
+                showNotification('Trade executed successfully!', 'success');
+            });
+        });
+
+        tradesPage.querySelectorAll<HTMLButtonElement>('.delete-trade').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                const index = parseInt(btn.dataset.index!);
                 plannedTrades.splice(index, 1);
                 updatePlannedTradesTable();
             });
         });
-
-        tradesPage.querySelectorAll<HTMLButtonElement>('.execute-trade').forEach((button) => {
-            button.addEventListener('click', async () => {
-                const index = parseInt(button.dataset.index!, 10);
-                const trade = plannedTrades[index];
-
-                try {
-                    const result = await executeTrade(trade);
-                    trade.status = 'executed';
-                    trade.executedPrice = trade.price;
-
-                    if (trade.action === 'sell') {
-                        const { profit } = calculateTradeProfitLoss(trade.symbol, trade.quantity, trade.executedPrice!);
-                        trade.profitLoss = profit;
-                    }
-
-                    updatePlannedTradesTable();
-                    showNotification(result, 'success');
-                } catch (error) {
-                    if (error instanceof Error) {
-                        showNotification(`Error executing trade: ${error.message}`, 'error');
-                    } else {
-                        showNotification('An unknown error occurred.', 'error');
-                    }
-                }
-            });
-        });
     }
 
-    const tradeForm = TradeForm((trade: Trade) => {
+    function updateSummary(): void {
+        const totals = plannedTrades.reduce(
+            (acc, trade) => {
+                const value = trade.quantity * trade.price;
+                if (trade.action === 'buy') acc.totalBuy += value;
+                else if (trade.action === 'sell') acc.totalSell += value;
+
+                acc.totalProfitLoss += trade.profitLoss || 0;
+                return acc;
+            },
+            { totalBuy: 0, totalSell: 0, totalProfitLoss: 0 }
+        );
+
+        summaryDiv.innerHTML = `
+            <p><strong>Total Buy:</strong> $${totals.totalBuy.toFixed(2)}</p>
+            <p><strong>Total Sell:</strong> $${totals.totalSell.toFixed(2)}</p>
+            <p><strong>Overall Profit/Loss:</strong> $${totals.totalProfitLoss.toFixed(2)}</p>
+        `;
+    }
+
+    const tradeForm = TradeForm((trade) => {
         plannedTrades.push(trade);
         updatePlannedTradesTable();
     });
 
-    tradeFormContainer.appendChild(tradeForm);
+    tradesPage.querySelector('#trade-form-container')!.appendChild(tradeForm);
     updatePlannedTradesTable();
 
     return tradesPage;

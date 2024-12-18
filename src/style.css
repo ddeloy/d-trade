@@ -247,6 +247,35 @@ table td button:hover {
   border-color: transparent transparent #ccc transparent;
 }
 
+/* Trades page - free form strategy notes */
+.notes-cell {
+  cursor: pointer;
+  color: grey;
+  font-style: italic;
+}
+
+.notes-input {
+  font-style: normal;
+  color: black;
+  outline: none;
+  border: 1px solid lightgrey;
+  padding: 4px;
+}
+.notes-input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 4px #007bff;
+}
+
+.notes-cell.placeholder {
+  color: gray;
+  font-style: italic;
+}
+
+.notes-cell {
+  color: black;
+  font-style: normal;
+  cursor: text;
+}
 
 /* Notification fade-in animation */
 @keyframes fade-in {
