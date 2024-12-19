@@ -1,5 +1,5 @@
-import {fetchLast5DaysData} from '../utils/api';
-import {Chart} from 'chart.js/auto';
+import { fetchLast5DaysData } from '../utils/api';
+import { Chart } from 'chart.js/auto';
 
 export function PivotDashboard(): HTMLElement {
     const dashboard = document.createElement('div');
@@ -15,7 +15,7 @@ export function PivotDashboard(): HTMLElement {
     </div>
     <div><h3>[WIP] Pivot Day Trading</h3>
     <p>Based on the work of Mark Fisher and his proprietary "ACD Trading Method" - combined with Peter Steidlmayer's Market Profile theory.<br/>
-The primary tenant - identifying significant points of day trade entry and exit by analyzing price action, volume, and volatility.</p>
+    The primary tenant - identifying significant points of day trade entry and exit by analyzing price action, volume, and volatility.</p>
     </div>
     <div id="stock-data" style="margin-top: 1rem;"></div>
     <div id="rolling-pivot-data" style="margin-top: 1rem; text-align: left;"></div>
@@ -50,12 +50,16 @@ The primary tenant - identifying significant points of day trade entry and exit 
         try {
             stockDataDiv.textContent = 'Loading...';
 
-            const {last5Days, rolling2DayPivot} = await fetchLast5DaysData(symbol, numDays);
+            const { last5Days, rolling2DayPivot } = await fetchLast5DaysData(symbol, numDays);
+
+            // Calculate running sum of Plus/Minus
+            let runningSum = 0;
 
             // Display rolling 2-day pivot data
             rollingPivotDiv.innerHTML = `
                 <strong>Rolling 2-Day Pivot Diff:</strong> ${rolling2DayPivot.rollingPivotDiff} | 
-                <strong>Rolling Pivot Range:</strong> ${rolling2DayPivot.rollingPivotRange}
+                <strong>Rolling Pivot Range:</strong> ${rolling2DayPivot.rollingPivotRange} | 
+                <strong>Running Plus/Minus:</strong> <span id="running-sum"></span>
             `;
 
             // Clear existing table
@@ -96,6 +100,9 @@ The primary tenant - identifying significant points of day trade entry and exit 
                 } else if (open > pivotHigh && close < pivotLow) {
                     plusMinus = -1;
                 }
+
+                runningSum += plusMinus; // Update running sum
+
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${date}</td>
@@ -112,9 +119,14 @@ The primary tenant - identifying significant points of day trade entry and exit 
                 avgRanges.push(parseFloat(values.pivotNum));
             });
 
-
             dailyTableContainer.appendChild(table);
             stockDataDiv.textContent = `Data for ${symbol} updated successfully.`;
+
+            // Update running sum display
+            const runningSumElement = rollingPivotDiv.querySelector<HTMLSpanElement>('#running-sum');
+            if (runningSumElement) {
+                runningSumElement.textContent = runningSum.toString();
+            }
 
             // Render chart
             if (chartInstance) {
