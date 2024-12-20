@@ -7,6 +7,7 @@ import { Settings } from './components/Settings';
 import { StrategyPage } from './components/StrategyPage';
 import { addRoute, initRouter } from './utils/router';
 import {ProfileDashboard} from "./components/MarketProfileDashboard.ts";
+import {PivotMovingAvgs} from "./components/PivotMovingAvgs.ts";
 
 // Get the main app container
 const app = document.querySelector<HTMLDivElement>('#app')!;
@@ -24,6 +25,7 @@ app.appendChild(mainContent);
 console.log('[DEBUG] Adding routes');
 addRoute('/', Overview);
 addRoute('/dashboard', PivotDashboard);
+addRoute('/pivot-avgs', PivotMovingAvgs);
 addRoute('/market-profile', ProfileDashboard);
 addRoute('/trades', Trades);
 addRoute('/settings', Settings);

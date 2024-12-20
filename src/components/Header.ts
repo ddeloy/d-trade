@@ -7,6 +7,7 @@ export function Header(): HTMLElement {
         <nav>
             <a href="#/" class="nav-link">Overview</a>
             <a href="#/dashboard" class="nav-link">Dashboard - Pivot Range</a>
+            <a href="#/pivot-avgs" class="nav-link">Pivot - Moving Averages</a>
             <a href="#/market-profile" class="nav-link">Dashboard - Market Profile</a>  
             <a href="#/trades" class="nav-link">Trades</a>
             <a href="#/settings" class="nav-link">Settings</a>
