@@ -110,5 +110,53 @@ export async function fetchLast5DaysData(symbol: string, numDays: number = 5): P
         };
     }
 
+    // Calculate rolling 3-day pivot range
+    /* let rolling3DayPivot: RollingPivotData = {
+        rollingPivotDiff: 'N/A',
+        rollingPivotRange: 'N/A',
+    };
+
+    if (validDates.length >= 3) {
+        // Retrieve the last 3 valid days
+        const day1 = allData[validDates[0]];
+        const day2 = allData[validDates[1]];
+        const day3 = allData[validDates[2]]; // Most recent day
+
+        // Calculate the high and low values across 3 days
+        const rollingPivotHigh = Math.max(
+            parseFloat(day1['2. high']),
+            parseFloat(day2['2. high']),
+            parseFloat(day3['2. high'])
+        );
+
+        const rollingPivotLow = Math.min(
+            parseFloat(day1['3. low']),
+            parseFloat(day2['3. low']),
+            parseFloat(day3['3. low'])
+        );
+
+        // Use the close of the most recent day
+        const rollingPivotClose = parseFloat(day3['4. close']); // FIXED
+
+        // Calculate the pivot range
+        const avgRollingRange = (rollingPivotHigh + rollingPivotLow + rollingPivotClose) / 3;
+        const rollingPivotNum = (rollingPivotHigh + rollingPivotLow) / 2;
+        const rollingPivotDiff = Math.abs(avgRollingRange - rollingPivotNum);
+
+        // Calculate the upper and lower bounds
+        const rollingPivotHighValue = (rollingPivotNum + rollingPivotDiff).toFixed(2);
+        const rollingPivotLowValue = (rollingPivotNum - rollingPivotDiff).toFixed(2);
+
+        // Update the rolling 3-day pivot result
+        rolling3DayPivot = {
+            rollingPivotDiff: rollingPivotDiff.toFixed(2),
+            rollingPivotRange: `${rollingPivotHighValue} to ${rollingPivotLowValue}`,
+        };
+    }
+*/
+
+
     return { last5Days: last5DaysData, rolling2DayPivot };
 }
+
+
