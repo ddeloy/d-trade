@@ -44,24 +44,14 @@ export function PivotMovingAvgs(): HTMLElement {
     };
 
     // Plugin for vertical lines and close markers
+
     const verticalLinePlugin: Plugin<'line'> = {
         id: 'verticalLinePlugin',
         afterDraw(chart) {
             const { ctx, scales } = chart;
-            const datasetCount = chart.data.datasets.length;
-
-            // Log dataset info for debugging
-            console.log('Dataset count:', datasetCount);
-            console.log('Chart data:', chart.data);
-
-            // Ensure datasets for highs, lows, and closes exist
             const highs: number[] = chart.data.datasets[3]?.data as number[] || [];
             const lows: number[] = chart.data.datasets[4]?.data as number[] || [];
             const closes: number[] = chart.data.datasets[5]?.data as number[] || [];
-
-            console.log('Highs:', highs);
-            console.log('Lows:', lows);
-            console.log('Closes:', closes);
 
             if (!highs.length || !lows.length || !closes.length) return;
 
@@ -75,9 +65,6 @@ export function PivotMovingAvgs(): HTMLElement {
                 const yLow = scales.y.getPixelForValue(low);
                 const yClose = scales.y.getPixelForValue(close);
 
-                // Debug coordinates
-                console.log(`x: ${x}, yHigh: ${yHigh}, yLow: ${yLow}, yClose: ${yClose}`);
-
                 if (!isNaN(x) && !isNaN(yHigh) && !isNaN(yLow) && !isNaN(yClose)) {
                     // Draw high/low line
                     ctx.strokeStyle = 'gray';
@@ -87,10 +74,23 @@ export function PivotMovingAvgs(): HTMLElement {
                     ctx.lineTo(x, yLow);
                     ctx.stroke();
 
-                    // Draw close marker
+                    // Draw close marker as a square or diamond
                     ctx.fillStyle = 'black';
                     ctx.beginPath();
-                    ctx.arc(x, yClose, 3, 0, 2 * Math.PI);
+
+                    // Square marker
+                    const markerSize = 3; // Adjust size
+                    ctx.rect(x - markerSize / 2, yClose - markerSize / 2, markerSize, markerSize);
+
+                    // Uncomment below for diamond marker instead
+                    /*
+                    ctx.moveTo(x, yClose - markerSize / 2);
+                    ctx.lineTo(x + markerSize / 2, yClose);
+                    ctx.lineTo(x, yClose + markerSize / 2);
+                    ctx.lineTo(x - markerSize / 2, yClose);
+                    ctx.closePath();
+                    */
+
                     ctx.fill();
                 }
             });
@@ -98,6 +98,7 @@ export function PivotMovingAvgs(): HTMLElement {
             ctx.restore();
         },
     };
+
 
     fetchButton.addEventListener('click', async () => {
         const symbol = input.value.trim().toUpperCase();
@@ -135,25 +136,34 @@ export function PivotMovingAvgs(): HTMLElement {
                             label: '14-Day Pivot Num Avg',
                             data: pivotNums14,
                             borderColor: 'rgba(75, 192, 192, 1)',
-                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            backgroundColor: 'rgba(75, 192, 192, 0.1)', // Semi-transparent background
                             borderWidth: 2,
+                            tension: 0.4, // Smoothing for curved line
                             spanGaps: true,
+                            pointRadius: 2, // Smaller point size
+                            pointHoverRadius: 3, // Slightly larger on hover
                         },
                         {
                             label: '30-Day Pivot Num Avg',
                             data: pivotNums30,
                             borderColor: 'rgba(192, 75, 75, 1)',
-                            backgroundColor: 'rgba(192, 75, 75, 0.2)',
+                            backgroundColor: 'rgba(192, 75, 75, 0.1)', // Semi-transparent background
                             borderWidth: 2,
+                            tension: 0.4, // Smoothing for curved line
                             spanGaps: true,
+                            pointRadius: 2, // Smaller point size
+                            pointHoverRadius: 3, // Slightly larger on hover
                         },
                         {
                             label: '50-Day Pivot Num Avg',
                             data: pivotNums50,
                             borderColor: 'rgba(75, 75, 192, 1)',
-                            backgroundColor: 'rgba(75, 75, 192, 0.2)',
+                            backgroundColor: 'rgba(75, 75, 192, 0.1)', // Semi-transparent background
                             borderWidth: 2,
+                            tension: 0.4, // Smoothing for curved line
                             spanGaps: true,
+                            pointRadius: 2, // Smaller point size
+                            pointHoverRadius: 3, // Slightly larger on hover
                         },
                         {
                             label: 'Highs',
