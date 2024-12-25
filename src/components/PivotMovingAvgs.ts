@@ -1,5 +1,5 @@
 import { fetchLast5DaysData } from '../utils/api';
-import { Chart } from 'chart.js/auto';
+import { Chart, Plugin } from 'chart.js';
 
 export function PivotMovingAvgs(): HTMLElement {
     const dashboard = document.createElement('div');
@@ -23,15 +23,70 @@ export function PivotMovingAvgs(): HTMLElement {
     const pivotChartCanvas = dashboard.querySelector<HTMLCanvasElement>('#pivot-chart')!;
     let chartInstance: Chart | null = null;
 
-    // Function to calculate moving averages
     const calculateMovingAverage = (data: number[], windowSize: number): number[] => {
         return data.map((_, index) => {
             if (index + 1 < windowSize) {
-                return NaN; // Ensure compatibility with Chart.js by using NaN
+                return NaN;
             }
             const window = data.slice(index + 1 - windowSize, index + 1);
             return window.reduce((sum, value) => sum + value, 0) / window.length;
         });
+    };
+
+    // Plugin for vertical lines and close markers
+    const verticalLinePlugin: Plugin<'line'> = {
+        id: 'verticalLinePlugin',
+        afterDraw(chart) {
+            const { ctx, scales } = chart;
+            const datasetCount = chart.data.datasets.length;
+
+            // Log dataset info for debugging
+            console.log('Dataset count:', datasetCount);
+            console.log('Chart data:', chart.data);
+
+            // Ensure datasets for highs, lows, and closes exist
+            const highs: number[] = chart.data.datasets[3]?.data as number[] || [];
+            const lows: number[] = chart.data.datasets[4]?.data as number[] || [];
+            const closes: number[] = chart.data.datasets[5]?.data as number[] || [];
+
+            console.log('Highs:', highs);
+            console.log('Lows:', lows);
+            console.log('Closes:', closes);
+
+            if (!highs.length || !lows.length || !closes.length) return;
+
+            ctx.save();
+
+            highs.forEach((high, i) => {
+                const low = lows[i];
+                const close = closes[i];
+                const x = scales.x.getPixelForValue(i);
+                const yHigh = scales.y.getPixelForValue(high);
+                const yLow = scales.y.getPixelForValue(low);
+                const yClose = scales.y.getPixelForValue(close);
+
+                // Debug coordinates
+                console.log(`x: ${x}, yHigh: ${yHigh}, yLow: ${yLow}, yClose: ${yClose}`);
+
+                if (!isNaN(x) && !isNaN(yHigh) && !isNaN(yLow) && !isNaN(yClose)) {
+                    // Draw high/low line
+                    ctx.strokeStyle = 'gray';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(x, yHigh);
+                    ctx.lineTo(x, yLow);
+                    ctx.stroke();
+
+                    // Draw close marker
+                    ctx.fillStyle = 'black';
+                    ctx.beginPath();
+                    ctx.arc(x, yClose, 3, 0, 2 * Math.PI);
+                    ctx.fill();
+                }
+            });
+
+            ctx.restore();
+        },
     };
 
     fetchButton.addEventListener('click', async () => {
@@ -43,23 +98,24 @@ export function PivotMovingAvgs(): HTMLElement {
         }
 
         try {
-            // Fetch data for 100 days to account for historical data needed
             const data = await fetchLast5DaysData(symbol, 100);
             const allDates = Object.keys(data.last5Days).reverse();
             const allPivotNums = Object.values(data.last5Days).map(d => parseFloat(d.pivotNum)).reverse();
+            const highs = Object.values(data.last5Days).map(d => parseFloat(d.high)).reverse();
+            const lows = Object.values(data.last5Days).map(d => parseFloat(d.low)).reverse();
+            const closes = Object.values(data.last5Days).map(d => parseFloat(d.close)).reverse();
 
-            // Extract the most recent 50 days for the chart
             const dates = allDates.slice(-50);
-
-            // Calculate moving averages using the full dataset
             const pivotNums14 = calculateMovingAverage(allPivotNums, 14).slice(-50);
             const pivotNums30 = calculateMovingAverage(allPivotNums, 30).slice(-50);
             const pivotNums50 = calculateMovingAverage(allPivotNums, 50).slice(-50);
 
-            // Render overlay chart
             if (chartInstance) {
                 chartInstance.destroy();
             }
+
+            Chart.register(verticalLinePlugin);
+
             chartInstance = new Chart(pivotChartCanvas, {
                 type: 'line',
                 data: {
@@ -67,7 +123,7 @@ export function PivotMovingAvgs(): HTMLElement {
                     datasets: [
                         {
                             label: '14-Day Pivot Num Avg',
-                            data: pivotNums14.filter(val => !isNaN(val)), // Filter out NaN values
+                            data: pivotNums14,
                             borderColor: 'rgba(75, 192, 192, 1)',
                             backgroundColor: 'rgba(75, 192, 192, 0.2)',
                             borderWidth: 2,
@@ -75,7 +131,7 @@ export function PivotMovingAvgs(): HTMLElement {
                         },
                         {
                             label: '30-Day Pivot Num Avg',
-                            data: pivotNums30.filter(val => !isNaN(val)),
+                            data: pivotNums30,
                             borderColor: 'rgba(192, 75, 75, 1)',
                             backgroundColor: 'rgba(192, 75, 75, 0.2)',
                             borderWidth: 2,
@@ -83,11 +139,23 @@ export function PivotMovingAvgs(): HTMLElement {
                         },
                         {
                             label: '50-Day Pivot Num Avg',
-                            data: pivotNums50.filter(val => !isNaN(val)),
+                            data: pivotNums50,
                             borderColor: 'rgba(75, 75, 192, 1)',
                             backgroundColor: 'rgba(75, 75, 192, 0.2)',
                             borderWidth: 2,
                             spanGaps: true,
+                        },
+                        {
+                            label: 'Highs',
+                            data: highs.slice(-50),
+                        },
+                        {
+                            label: 'Lows',
+                            data: lows.slice(-50),
+                        },
+                        {
+                            label: 'Closes',
+                            data: closes.slice(-50),
                         },
                     ],
                 },
