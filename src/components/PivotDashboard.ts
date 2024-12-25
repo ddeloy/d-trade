@@ -7,20 +7,41 @@ export function PivotDashboard(): HTMLElement {
     dashboard.innerHTML = `
     <h2>Pivot Trading Dashboard</h2>
     <div>
-        <h4>Enter a valid symbol, number of days, and click 'Fetch Data' to load real-time data from Alpha Vantage API (15-min delay)</h4>
+        <h4>Enter a valid symbol, number of days, and click 'Fetch Data' to load data from Alpha Vantage API</h4>
         <input id="symbol-input" type="text" placeholder="Enter stock symbol" />
         <input id="days-input" type="number" min="1" max="30" value="5" placeholder="Days" style="width: 80px;" />
         <button id="fetch-button">Fetch Data</button>
         <button id="reset-button" style="margin-left: 8px;">Reset</button>
     </div>
-    <div><h3>[WIP] Pivot Day Trading</h3>
-    <p>Based on the work of Mark Fisher and his proprietary "ACD Trading Method" - combined with Peter Steidlmayer's Market Profile theory.<br/>
-    The primary tenant - identifying significant points of day trade entry and exit by analyzing price action, volume, and volatility.</p>
-    </div>
+<div>
+    <h3>Pivot Day Trading Dashboard</h3>
+    <p>
+        Inspired by Mark Fisher's "ACD Trading Method", this dashboard identifies key 
+        day trading entry and exit points using price action, volume, and volatility analysis.<br/><br/>
+        
+        The dashboard provides:
+        <ul>
+            <li><strong>Daily Pivot Calculations:</strong> Analyze daily high, low, and close prices with calculated pivot ranges for support and resistance levels.</li>
+            <li><strong>Rolling 2-Day Pivot Average:</strong> Tracks short-term price behavior to highlight shifts in momentum.</li>
+            <li><strong>Plus/Minus Analysis:</strong> Experimental metric to gauge market sentiment:
+                <ul>
+                    <li><strong>+1:</strong> Bullish (opened below, closed above the pivot range).</li>
+                    <li><strong>-1:</strong> Bearish (opened above, closed below the pivot range).</li>
+                    <li><strong>0:</strong> Neutral (other behaviors).</li>
+                </ul>
+            </li>
+        </ul>
+    </p>
+    <p>
+        Use this tool to monitor rolling pivot ranges, track sentiment trends with Plus/Minus values, 
+        and make data-driven decisions for your trading strategy.
+    </p>
+</div>
+
     <div id="stock-data" style="margin-top: 1rem;"></div>
     <div id="rolling-pivot-data" style="margin-top: 1rem; text-align: left;"></div>
     <div id="daily-table-container" style="margin-top: 2rem;">
-        <h3 style="text-align:left">Data for Rolling Last 5 Trading Days</h3>
+        <h3 style="text-align:left">Data for Rolling Last 'N' Trading Days</h3>
     </div>
     <div style="margin-top: 2rem; text-align: left;">
         <canvas id="pivot-chart" width="800" height="400" style="display: block; margin: 0 auto; box-sizing: border-box; max-width: 100%; max-height: 100%; height: 500px;"></canvas>

@@ -12,8 +12,7 @@ export function ProfileDashboard(): HTMLElement {
             <button id="fetch-button">Fetch Data</button>
         </div>
         <div><h3>[WIP] Custom Market Profile Chart</h3>
-        <p>The Market Profile displays TPOs (Time Price Opportunities) for each price level during the full trading day. </br>
-        Each capital letter corresponds to a 30-minute interval.</p>
+        <p>The Market Profile displays TPOs (Time Price Opportunities) for each price level during the full trading day. Each capital letter corresponds to a 30-minute interval.</p>
         
         </div>
         <div id="stock-data" style="margin-top: 1rem;"></div>

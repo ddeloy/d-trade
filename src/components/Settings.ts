@@ -4,6 +4,7 @@ export function Settings(): HTMLElement {
     // HTML structure for the Settings page
     settingsPage.innerHTML = `
         <h2>Settings</h2>
+        <div><p><b>[WIP]</b> Functionality not fully integrated/wired up just yet</p></div>
         <section id="user-preferences">
             <h3>User Preferences</h3>
             <label>
