@@ -13,7 +13,7 @@ export function PivotDashboard(): HTMLElement {
         <button id="fetch-button">Fetch Data</button>
         <button id="reset-button" style="margin-left: 8px;">Reset</button>
     </div>
-<div>
+<!--<div>
     <h3>Pivot Day Trading Dashboard</h3>
     <p>
         Inspired by Mark Fisher's "ACD Trading Method", this dashboard identifies key 
@@ -36,7 +36,7 @@ export function PivotDashboard(): HTMLElement {
         Use this tool to monitor rolling pivot ranges, track sentiment trends with Plus/Minus values, 
         and make data-driven decisions for your trading strategy.
     </p>
-</div>
+</div>-->
 
     <div id="stock-data" style="margin-top: 1rem;"></div>
     <div id="rolling-pivot-data" style="margin-top: 1rem; text-align: left;"></div>
