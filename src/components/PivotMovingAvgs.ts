@@ -12,14 +12,13 @@ export function PivotMovingAvgs(): HTMLElement {
         <button id="fetch-button">Fetch Data</button>
         <button id="reset-button" style="margin-left: 8px;">Reset</button>
     </div>
-<!--    <div style="margin-top: 1rem;">
+    <div style="margin-top: 1rem;">
         <p>
-            This chart, inspired by concepts from Mark Fisher's book <em>The Logical Trader</em>, displays the 14-day, 30-day, and 50-day moving averages of the pivot numbers.
+            This chart, inspired by concepts from Mark Fisher's book <em><a href="http://www.thelogicaltraderonline.net/" target="_blank">The Logical Trader</a></em>, displays the 14-day, 30-day, and 50-day moving averages of the pivot numbers.
             These averages help identify trends and momentum in price action. The chart also overlays vertical lines representing daily high, low, and close prices for a detailed 
             analysis of price volatility and range. Use this visualization to spot key support and resistance levels while monitoring how price behavior aligns with historical trends. 
-            To learn more, refer to <em>The Logical Trader</em> by Mark Fisher.
         </p>
-    </div>-->
+    </div>
     <!--- Chart Section -->
     <div style="margin-top: 2rem; text-align: left;">
         <canvas id="pivot-chart" width="800" height="400" style="display: block; margin: 0 auto; box-sizing: border-box; max-width: 100%; max-height: 100%; height: 500px;"></canvas>

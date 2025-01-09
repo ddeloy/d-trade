@@ -11,10 +11,9 @@ export function ProfileDashboard(): HTMLElement {
             <input id="symbol-input" type="text" placeholder="Enter stock symbol" />
             <button id="fetch-button">Fetch Data</button>
         </div>
-        <!--<div><h3>[WIP] Custom Market Profile Chart</h3>
-        <p>The Market Profile displays TPOs (Time Price Opportunities) for each price level during the full trading day. Each capital letter corresponds to a 30-minute interval.</p>
-        
-        </div>-->
+        <div>
+        <p>The <a href="https://en.wikipedia.org/wiki/Market_profile" target="_blank"><em>Market Profile</em></a>, inspired by the work of Peter Steidlmayer, displays TPOs (Time Price Opportunities) for each price level during the full trading day. Each capital letter corresponds to a 30-minute interval.</p>    
+        </div>
         <div id="stock-data" style="margin-top: 1rem;"></div>
         <div id="day-summary" style="margin-top: 2rem; display: none; width:fit-content">
             <h3 style="text-align:center">Day Summary</h3>

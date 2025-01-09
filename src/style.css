@@ -277,6 +277,20 @@ table td button:hover {
   cursor: text;
 }
 
+/* Info icons on PivotDashboard */
+.info-icon {
+  font-size: 14px;
+  color: #888;
+  cursor: pointer;
+  margin-left: 5px;
+  text-decoration: none;
+}
+
+.info-icon:hover {
+  color: #555;
+  text-decoration: underline;
+}
+
 /* Notification fade-in animation */
 @keyframes fade-in {
   from {
