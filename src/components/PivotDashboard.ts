@@ -28,7 +28,7 @@ export function PivotDashboard(): HTMLElement {
     <div style="margin-top: 2rem; text-align: center;">
         <h4>
             Pivot Chart 
-            <span class="info-icon" title="This chart shows the average pivot range over the selected trading days. It helps visualize price movement trends.">ℹ️</span>
+            <span class="info-icon" title="The number average range over the selected trading days - helps visualize price movement trends.">ℹ️</span>
         </h4>
         <canvas id="pivot-chart" width="800" height="400" style="display: block; margin: 0 auto; box-sizing: border-box; max-width: 100%; max-height: 100%; height: 500px;"></canvas>
     </div>
