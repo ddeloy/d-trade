@@ -28,7 +28,7 @@ export function PivotDashboard(): HTMLElement {
     <div style="margin-top: 2rem; text-align: center;">
         <h4>
             Pivot Chart 
-            <span class="info-icon" title="The number average range over the selected trading days - helps visualize price movement trends.">ℹ️</span>
+            <span class="info-icon" title="The pivot number range over the selected trading days - helps visualize price movement trends.">ℹ️</span>
         </h4>
         <canvas id="pivot-chart" width="800" height="400" style="display: block; margin: 0 auto; box-sizing: border-box; max-width: 100%; max-height: 100%; height: 500px;"></canvas>
     </div>
@@ -67,7 +67,20 @@ export function PivotDashboard(): HTMLElement {
             const close8DaysAgo = closePrices[8]; // Close 8 days ago
             const momentum = parseFloat((latestClose - close8DaysAgo).toFixed(2)); // Ensure momentum is a number
 
-            // Display rolling pivot data with Momentum and info icons
+            // Calculate Bias
+            const latestDay = Object.values(last5Days)[0];
+            const pivotHigh = parseFloat(latestDay.pivotHigh);
+            const pivotLow = parseFloat(latestDay.pivotLow);
+            const closePrice = parseFloat(latestDay.close);
+
+            let bias = 'Neutral';
+            if (closePrice > pivotHigh) {
+                bias = 'Bullish';
+            } else if (closePrice < pivotLow) {
+                bias = 'Bearish';
+            }
+
+            // Display rolling pivot data with Bias and Momentum
             rollingPivotDiv.innerHTML = `
                 <strong>Rolling 2-Day Pivot Diff:</strong> ${rolling2DayPivot.rollingPivotDiff} 
                 <span class="info-icon" title="Difference in the average pivot price over the last 2 days.">ℹ️</span> | 
@@ -80,6 +93,9 @@ export function PivotDashboard(): HTMLElement {
 
                 <strong>Momentum:</strong> ${momentum > 0 ? '+' : ''}${momentum} 
                 <span class="info-icon" title="Difference between the latest close price and the close price 8 days ago.">ℹ️</span>
+                <div style="margin-top: 0.5rem"><strong>Bias:</strong> ${bias} 
+                <span class="info-icon" title="Determined by comparing the close to the pivot range (Above range = Bullish, Below range = Bearish, Within range = Neutral).">ℹ️</span>
+                </div>
             `;
 
             // Clear existing table
